@@ -2,7 +2,7 @@
 --!native
 
 
--- Version 0.1.0-a.1
+-- Version 0.1.0-a.2
 
 --@illinois_roadbuff
 
@@ -148,6 +148,39 @@ function IRBThread.spawn<T...>(callback: (T...) -> nil, ...: T...)
 	end
 end
 
+function IRBThread.resume<T...>(callback: (T...) -> nil, ...: T...)
+	if #threadPoolInstance._openThreads < 1 then
+		print("No available threads. Creating a new one.")
+		threadPoolInstance._createThread()
+	end
+	local thread = threadPoolInstance._openThreads[#threadPoolInstance._openThreads] 
+	if thread and thread._coroutine then
+		if  coroutine.status(thread._coroutine) == "suspended" then
+			print("Spawning new task on thread. Total threads now: " .. tostring(#threadPoolInstance._openThreads))
+			if RelyOnCallback then
+				--task.spawn(thread._coroutine, callback, ...)
+				coroutine.resume(thread._coroutine, callback, ...)
+			elseif RelyOnSignal then
+				--local Signal = GoodSignal.new()
+				coroutine.resume(thread._coroutine, callback, thread._signal, ...) 
+				--	Signal:Wait()
+				--	Signal:DisconnectAll()
+			end
+		elseif  coroutine.status(thread._coroutine) == "dead" then
+			print("Thread is dead, creating a new thread.")
+			task.cancel(thread._coroutine)
+			table.remove(threadPoolInstance._openThreads, #threadPoolInstance._openThreads)
+
+			threadPoolInstance._createThread()
+			threadPoolInstance.resume(callback, ...) 
+		elseif  coroutine.status(thread._coroutine) ~= "running" or  coroutine.status(thread._coroutine) ~= "normal" then
+			warn("unexpected?"..coroutine.status(thread._coroutine))
+		end
+	else
+		warn("thread is nil")
+	end
+end
+
 function IRBThread.defer<T...>(callback: (T...) -> nil, ...: T...)
 	if #threadPoolInstance._openThreads < 1 then
 		print("No available threads. Creating a new one.")
@@ -159,7 +192,7 @@ function IRBThread.defer<T...>(callback: (T...) -> nil, ...: T...)
 			if RelyOnCallback then
 
 				game["Run Service"].Heartbeat:Wait()
-				task.spawn(thread, callback, ...)
+			--	task.spawn(thread, callback, ...)
 				coroutine.resume(thread._coroutine, callback, ...)
 			elseif RelyOnSignal then
 				--local Signal = GoodSignal.new()
@@ -178,6 +211,46 @@ function IRBThread.defer<T...>(callback: (T...) -> nil, ...: T...)
 
 			threadPoolInstance._createThread()
 			threadPoolInstance.defer(callback, ...)
+		elseif  coroutine.status(thread._coroutine) ~= "running" or  coroutine.status(thread._coroutine) ~= "normal" then
+			warn("unexpected?"..coroutine.status(thread._coroutine))
+		end
+	else
+		warn("thread is nil")
+	end
+end
+
+function IRBThread.delay<T...>(t:number, callback: (T...) -> nil, ...: T...)
+	if #threadPoolInstance._openThreads < 1 then
+		print("No available threads. Creating a new one.")
+		threadPoolInstance._createThread()
+	end
+	local thread = threadPoolInstance._openThreads[#threadPoolInstance._openThreads] 
+	if thread and thread._coroutine then
+		if  coroutine.status(thread._coroutine) == "suspended" then
+			if RelyOnCallback then
+
+			--	game["Run Service"].Heartbeat:Wait()
+				--	task.spawn(thread, callback, ...)
+				--coroutine.resume(thread._coroutine, callback, ...)
+				task.delay(t, thread._coroutine, callback, ...)
+			elseif RelyOnSignal then
+				--local Signal = GoodSignal.new()
+
+
+			--	game["Run Service"].Heartbeat:Wait()
+				--	task.spawn(thread._coroutine, callback, thread._signal, ...)
+				--coroutine.resume(thread._coroutine, callback, thread._signal, ...)
+				task.delay(t, thread._coroutine, callback, thread._signal, ...)
+				--	Signal:Wait()
+				--	Signal:DisconnectAll()
+			end
+		elseif  coroutine.status(thread._coroutine) == "dead" then
+			print("Thread is dead, creating a new thread.")
+			task.cancel(thread._coroutine)
+			table.remove(threadPoolInstance._openThreads, #threadPoolInstance._openThreads)
+
+			threadPoolInstance._createThread()
+			threadPoolInstance.delay(t, callback, ...)
 		elseif  coroutine.status(thread._coroutine) ~= "running" or  coroutine.status(thread._coroutine) ~= "normal" then
 			warn("unexpected?"..coroutine.status(thread._coroutine))
 		end
