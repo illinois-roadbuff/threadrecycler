@@ -7,30 +7,33 @@ Recycle and reuse threads!
 
 ### Using signals
 
+```lua
 local threads = require(module)
-
 function(signal, ...)
-
 signal:Fire() -- call when completed
-
 end)
 
 threads.defer(true, function, ...) -- can be threads.spawn and threads.resume too
+```
 
 #### Delay
 
+```lua
 threads.delay(true, time, function, ...)
+```
 
 ### Not using signals
 
+```lua
 local threads = require(module)
-
 function(...)
-
 end)
 
 threads.defer(false, function, ...) -- can be threads.spawn and threads.resume too
+```
 
 #### Delay
 
+```lua
 threads.delay(false, time, function, ...)
+```
