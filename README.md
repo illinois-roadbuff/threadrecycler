@@ -14,7 +14,7 @@ function(signal, ...)
 signal:Fire() -- call when completed
 end)
 
-threads.defer(true, function, ...) -- can be threads.spawn and threads.resume too
+threads.defer(true, function, ...) -- can be threads.spawn and threads.wrap too
 ```
 
 #### Using delay
