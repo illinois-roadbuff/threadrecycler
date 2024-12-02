@@ -2,6 +2,9 @@
 Recycle and reuse threads!
 
 ## API
+
+### Using signals
+
 local threads = require(module)
 
 function(signal, ...)
@@ -10,8 +13,22 @@ signal:Fire() -- call when completed
 
 end)
 
-threads.defer(function, ...) -- can be threads.spawn and threads.resume too
+threads.defer(true, function, ...) -- can be threads.spawn and threads.resume too
 
-### Delay
+#### Delay
 
-threads.delay(time, function, ...)
+threads.delay(true, time, function, ...)
+
+### Not using signals
+
+local threads = require(module)
+
+function(...)
+
+end)
+
+threads.defer(false, function, ...) -- can be threads.spawn and threads.resume too
+
+#### Delay
+
+threads.delay(false, time, function, ...)
