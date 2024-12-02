@@ -219,7 +219,7 @@ function IRBThread.spawn<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: 
 	end
 end
 
-function IRBThread.resume<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
+function IRBThread.wrap<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
 	if #threadPoolInstance._openThreads < 1 then
 		--print("No available threads. Creating a new one.")
 		threadPoolInstance._createThread(UseSignal)
@@ -246,7 +246,7 @@ function IRBThread.resume<T...>(UseSignal:boolean, callback: (T...) -> nil, ...:
 			IRBThread._releaseThread(thread)
 
 			threadPoolInstance._createThread(UseSignal)
-			threadPoolInstance.resume(UseSignal, callback, ...) 
+			threadPoolInstance.wrap(UseSignal, callback, ...) 
 		elseif  status ~= "running" and  status ~= "normal" then
 		--	warn("unexpected?"..coroutine.status(thread._coroutine))
 		end
