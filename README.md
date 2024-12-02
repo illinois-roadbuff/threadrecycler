@@ -3,6 +3,8 @@ Recycle and reuse threads!
 
 ## API
 
+**⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely (forever).**
+
 ### Using signals
 
 local threads = require(module)
