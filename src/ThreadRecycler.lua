@@ -1,12 +1,13 @@
 --!strict
 --!native
 
-
--- Version 0.1.0-a.4
+-- Version 0.1.0-a.5
 
 --@illinois_roadbuff
 
 --[[
+⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely.
+
 API (using signal):
 local threads = require(module)
 function(signal, ...)
