@@ -1,9 +1,10 @@
 # ThreadRecycler
-Recycle and reuse threads!
+Recycle and reuse threads! 
+Licensed under MIT (open-source)
 
 ## API
 
-**⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely (forever).**
+**⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely.**
 
 ### Using signals
 
@@ -16,13 +17,13 @@ end)
 threads.defer(true, function, ...) -- can be threads.spawn and threads.resume too
 ```
 
-#### Delay
+#### Using delay
 
 ```lua
 threads.delay(true, time, function, ...)
 ```
 
-### Not using signals
+### Not requiring signals
 
 ```lua
 local threads = require(module)
@@ -32,7 +33,7 @@ end)
 threads.defer(false, function, ...) -- can be threads.spawn and threads.resume too
 ```
 
-#### Delay
+#### Using delay
 
 ```lua
 threads.delay(false, time, function, ...)
