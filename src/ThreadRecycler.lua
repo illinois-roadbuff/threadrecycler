@@ -1,264 +1,186 @@
 --!strict
 --!native
 
--- Version 0.2.0-a.1
-
+-- Version 0.2.1-a.1
 --@illinois_roadbuff
-
 --[[
 ⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely.
 
 API (using signal):
 local threads = require(module)
 function(index, ...)
-threads._addrecycled(index) -- call when completed
+threads.recycle(index) -- call when completed
 end)
-
 threads.defer(true, function, ...) -can be threads.spawn too
 
 API (not using signal):
 local threads = require(module)
 function(...)
-
 end)
-
 threads.defer(false, function, ...) -can be threads.spawn too
-
 ]]
 
---local GoodSignal = require(script.FastSignal) -- require good signal or fast signal or random
+local t = {} -- t: Threads
+t.__index = t
 
-local IRBThread = {} 
-IRBThread.__index = IRBThread
+type t = {
+	_c: boolean, -- _c: Callback? (Manual recycling?)
+	_t: thread, -- _t: Thread
+}
 
-local threadPoolInstance  = {} 
+type r = { -- r: Recycling pool?
+	_t: number, -- Thread count
+	_o: {t}, -- _o: Open threads
+	_i: number, -- _i = Next index
+	_c: () -> nil, -- _c: Call
+	_n: (boolean) -> t, -- _n: Create thread
+	_y: () -> nil, -- _y: Yield
+	spawn:<T...> (boolean, (T...) -> nil, T...) -> nil,
+	defer:<T...> (boolean, (T...) -> nil, T...) -> nil,
+	wrap:<T...> (boolean, (T...) -> nil, T...) -> nil,
+	delay:<T...> (boolean, number,  (T...) -> nil, T...) -> nil
+}
 
-setmetatable(threadPoolInstance, IRBThread)
+local r: r  = {} :: r
+setmetatable(r::r, t::t)
 
-threadPoolInstance._openThreads = {} 
-threadPoolInstance._threadCount = 30 :: number --negative = dynamic
-threadPoolInstance._cachedThreadLifetime =  60 :: number?
+r._t = 30 :: number --negative = dynamic
+r._o = {} :: {t}
 
---print("initiated!!!!!")
-
---local RelyOnCallback = false -- must be false
-local StartOnSignal:boolean = true
-
-local nextThreadIndex:number = 1
-
-
-
+local StartOnSignal:boolean = true :: boolean
+local i:number = 1 :: number
 local threadMetatable = {
-	__index = function(thread, key)
-		if key == "signal" then
-
-			return thread._signal
-		end
-		if key == "coroutine" then
-
-			return thread._coroutine
-		end
-
+	__index = function(thread, key:string)
+		if key == "signal" then	return thread._c end
+		if key == "coroutine" then return thread._t end
 		return rawget(thread, key)
 	end
 }
 
-function IRBThread._getThread() 
-	nextThreadIndex = #threadPoolInstance._openThreads 
-	local thread:thread? = threadPoolInstance._openThreads[nextThreadIndex]
-
-	return thread, nextThreadIndex
+function t.recycle(index)
+	local thread:t = r._o[index]
+	r._o[i] = thread
+	i += 1
 end
 
-function IRBThread._addThread(thread)
-	threadPoolInstance._openThreads[#threadPoolInstance._openThreads + 1] = thread
-	nextThreadIndex = #threadPoolInstance._openThreads 
-end
-
-
-function IRBThread._releaseThread()
-	threadPoolInstance._openThreads[#threadPoolInstance._openThreads] = nil
-	nextThreadIndex = #threadPoolInstance._openThreads 
-end
-
-function IRBThread._addrecycled(index)
-	local thread:thread? = threadPoolInstance._openThreads[index]
-	IRBThread._addThread(thread)
-end
-
-function IRBThread._call<T...>(callback: (T...) -> nil, ...: T...)
-
-	local thread, index = IRBThread._getThread() 
+function t._call<T...>(callback: (T...) -> nil, ...: T...)
+	local thread:t = r._o[ - 1]
 	if not thread then
-		thread = IRBThread._createThread(true)  
+		t._createThread(false)  
+		thread = r._o[i - 1]
 	end
-
-	IRBThread._releaseThread()
-
+	r._o[i - 1] = nil
+	i -= 1
 	if callback and typeof(callback) == "table" or typeof(callback) == "function" then
-		if thread._signal then
-			callback(...)
-			--warn("C: Recycled thread added back. Total threads now: " .. tostring(#threadPoolInstance._openThreads).." "..nextThreadIndex)
-		else
-			callback(...)
-			IRBThread._addThread(thread)
+		if thread._c then callback(...) else callback(...)
+			r._o[i] = thread
+			i += 1
 		end
-	else
-		print(typeof(callback))
-	end
+	else warn(`ThreadRecycler: Invalid callback recived: {typeof(callback)}. Is your callback a function?`) end
 end
-function IRBThread:_yield(closeThread: boolean): nil
+
+function t:_y(closeThread: boolean)
 	while not closeThread do
-		threadPoolInstance._call(coroutine.yield())
+		t._call(coroutine.yield())
 	end
-	return 
 end
 
-function IRBThread._createThread(UseSignal: boolean)
-	local newThread: thread | nil
-
-	newThread = setmetatable({}, threadMetatable)  
-
-	newThread._signal = UseSignal
-	newThread._coroutine = coroutine.create(threadPoolInstance._yield)
-	coroutine.resume(newThread._coroutine :: thread, threadPoolInstance)
-	IRBThread._addThread(newThread)
+function t._createThread(UseSignal: boolean)
+	local newThread: t | nil
+	newThread = setmetatable({}, threadMetatable) :: t
+	newThread._c = UseSignal :: boolean
+	newThread._t = coroutine.create(r._y) :: thread
+	coroutine.resume(newThread._t :: thread, r :: r)
+	r._o[i] = newThread
+	i += 1
 end
 
-function IRBThread.spawn<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
-	if #threadPoolInstance._openThreads < 1 then
-		threadPoolInstance._createThread(UseSignal)
-	end
-	local thread, index = IRBThread._getThread()
-
-	if thread and thread._coroutine then
-		if  coroutine.status(thread._coroutine) == "suspended" then
-			if not UseSignal then
-				task.spawn(thread._coroutine, callback, ...)
-			else
-				task.spawn(thread._coroutine, callback, index, ...)
-			end
-		elseif  coroutine.status(thread._coroutine) == "dead" then
-			task.cancel(thread._coroutine)
-			IRBThread._releaseThread()
-
-			threadPoolInstance._createThread(UseSignal)
-			threadPoolInstance.spawn(UseSignal, callback, ...) 
-		elseif  coroutine.status(thread._coroutine) ~= "running" or  coroutine.status(thread._coroutine) ~= "normal" then
-				warn("unexpected?"..coroutine.status(thread._coroutine))
+function t.spawn<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
+	if #r._o < 1 then t._createThread(UseSignal) end
+	local thread:t = r._o[i - 1]
+	local index = i - 1::number
+	thread._c = UseSignal
+	local status:string = coroutine.status(thread._t)
+	if  status == "suspended" then
+		if not UseSignal then
+			task.spawn(thread._t::thread, callback:: (T...) -> nil, ...)
+		else
+			task.spawn(thread._t::thread, callback:: (T...) -> nil, index::number, ...)
 		end
-	else
-		warn("thread is nil")
+	elseif  status == "dead" then
+		task.cancel(thread._t)
+		r._o[i - 1] = nil
+		i -= 1
+		t._createThread(UseSignal)
+		r.spawn(UseSignal, callback, ...) 
 	end
 end
 
-function IRBThread.wrap<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
-	if #threadPoolInstance._openThreads < 1 then
-		threadPoolInstance._createThread(UseSignal)
-	end
-	local thread, index = IRBThread._getThread()
-	if thread and thread._coroutine then
-		local status = coroutine.status(thread._coroutine)
-		if  status == "suspended" then
-			if not UseSignal then
-				coroutine.resume(thread._coroutine, callback, ...)
-			else
-				coroutine.resume(thread._coroutine, callback, index, ...) 
-			end
-		elseif  status == "dead" then
-			task.cancel(thread._coroutine)
-			IRBThread._releaseThread(thread)
-
-			threadPoolInstance._createThread(UseSignal)
-			threadPoolInstance.wrap(UseSignal, callback, ...) 
-		elseif  status ~= "running" and  status ~= "normal" then
-				warn("unexpected?"..coroutine.status(thread._coroutine))
+function t.wrap<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
+	if #r._o < 1 then t._createThread(UseSignal) end
+	local thread:t = r._o[i - 1]
+	local index = i - 1::number
+	thread._c = UseSignal
+	local status = coroutine.status(thread._t)
+	if  status == "suspended" then
+		if not UseSignal then
+			coroutine.resume(thread._t, callback, ...)
+		else
+			coroutine.resume(thread._t, callback, index, ...) 
 		end
-	else
-			warn("thread is nil")
+	elseif  status == "dead" then
+		r._o[i - 1] = nil
+		i -= 1
+		t._createThread(UseSignal)
+		r.wrap(UseSignal, callback, ...) 
 	end
 end
 
-function IRBThread.defer<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
-	if #threadPoolInstance._openThreads < 1 then
-
-		threadPoolInstance._createThread(UseSignal)
-	end
-
-	local thread, index = IRBThread._getThread()
-	if thread and thread._coroutine then
-		local status = coroutine.status(thread._coroutine)
-		if  status == "suspended" then
-			if not UseSignal then
-				game["Run Service"].Heartbeat:Wait()
-
-				coroutine.resume(thread._coroutine, callback, ...)
-			else
-	
-
-
-				game["Run Service"].Heartbeat:Wait()
-	
-				coroutine.resume(thread._coroutine, callback, index, ...)
-
-			end
-		elseif  status == "dead" then
-
-			task.cancel(thread._coroutine)
-
-			IRBThread._releaseThread(thread)
-
-			threadPoolInstance._createThread(UseSignal)
-			threadPoolInstance.defer(UseSignal, callback, ...)
-	--	elseif  status ~= "running" and status ~= "normal" then
-		--	warn("unexpected?"..coroutine.status(thread._coroutine))
+function t.defer<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
+	if #r._o < 1 then t._createThread(UseSignal) end
+	local thread:t = r._o[i - 1]
+	local index = i - 1::number
+	thread._c = UseSignal
+	local status = coroutine.status(thread._t)
+	if  status == "suspended" then
+		if not UseSignal then
+			task.wait()
+			coroutine.resume(thread._t, callback, ...)
+		else
+			task.wait()
+			coroutine.resume(thread._t, callback, index, ...)
 		end
-	else
-			warn("thread is nil")
+	elseif  status == "dead" then
+		r._o[i - 1] = nil
+		i -= 1
+		t._createThread(UseSignal)
+		r.defer(UseSignal, callback, ...)
 	end
 end
 
-function IRBThread.delay<T...>(UseSignal, t:number, callback: (T...) -> nil, ...: T...)
-	if #threadPoolInstance._openThreads < 1 then
-		print("No available threads. Creating a new one.")
-		threadPoolInstance._createThread(UseSignal)
-	end
-	local thread, index = IRBThread._getThread()
-	if thread and thread._coroutine then
-		local status = coroutine.status(thread._coroutine)
-		if  status == "suspended" then
-			if not UseSignal then
-				task.delay(t, thread._coroutine, callback, ...)
-			else
-				task.delay(t, thread._coroutine, callback, index, ...)
-			end
-		elseif  status == "dead" then
-			--	print("Thread is dead, creating a new thread.")
-			task.cancel(thread._coroutine)
-			--	table.remove(threadPoolInstance._openThreads, #threadPoolInstance._openThreads)
-			IRBThread._releaseThread(thread)
-
-			threadPoolInstance._createThread(UseSignal)
-			threadPoolInstance.delay(UseSignal, t, callback, ...)
-		elseif  status ~= "running" and  status ~= "normal" then
-			--	warn("unexpected?"..coroutine.status(thread._coroutine))
+function t.delay<T...>(UseSignal, time:number, callback: (T...) -> nil, ...: T...)
+	if #r._o < 1 then t._createThread(UseSignal) end
+	local thread:t = r._o[i - 1]
+	local index = i - 1::number
+	thread._c = UseSignal
+	local status = coroutine.status(thread._t)
+	if  status == "suspended" then
+		if not UseSignal then
+			task.wait(time)
+			coroutine.resume(thread._t, callback, ...)
+		else
+			task.wait(time)
+			coroutine.resume(thread._t, callback, ...)
 		end
-	else
-		--warn("thread is nil")
+	elseif  status == "dead" then
+		r._o[i - 1] = nil
+		i -= 1
+		t._createThread(UseSignal)
+		r.delay(UseSignal, t, callback, ...)
 	end
 end
 
-function IRBThread.new(threadCount: number?, cachedThreadLifetime: number?)
-	return threadPoolInstance
+for n = 1, math.abs(r._t), 1 do
+	t._createThread(StartOnSignal)
 end
-
-for n = 1, math.abs(threadPoolInstance._threadCount), 1 do
-	IRBThread._createThread(StartOnSignal)
-	--print("Initial thread created. Total threads now: " .. tostring(#threadPoolInstance._openThreads))
-end
-
-
-
-export type IRBThread = typeof(IRBThread.new())
-
-return IRBThread
+return t
