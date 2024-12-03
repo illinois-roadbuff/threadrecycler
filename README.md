@@ -19,7 +19,7 @@ threads.defer(true, function, ...) -- can be threads.spawn and threads.wrap too
 
 #### Using delay
 
-**⚠️ This doesn't call task.delay due to multiple issues, so coroutine.resume is called instead together with a heartbeat. **
+**⚠️ This doesn't call task.delay due to multiple issues. Instead, coroutine.resume is called together with a heartbeat. **
 
 ```lua
 threads.delay(true, time, function, ...)
