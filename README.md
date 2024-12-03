@@ -4,7 +4,7 @@ Licensed under MIT (open-source)
 
 ## API
 
-**⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely.**
+**⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely. Misusing signals may result in unexpected behavior.**
 
 ### Using signals
 
@@ -18,6 +18,8 @@ threads.defer(true, function, ...) -- can be threads.spawn and threads.wrap too
 ```
 
 #### Using delay
+
+**⚠️ This doesn't call task.delay due to multiple issues. Instead, coroutine.resume is called together with a heartbeat. **
 
 ```lua
 threads.delay(true, time, function, ...)
