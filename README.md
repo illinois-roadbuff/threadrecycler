@@ -11,15 +11,14 @@ Licensed under MIT (open-source)
 ```lua
 local threads = require(module)
 function(index, ...)
-threads._addrecycled(index) -- call when completed
+threads.recycle(index) -- call when completed
 end)
 
 threads.defer(true, function, ...) -- can be threads.spawn and threads.wrap too
 ```
+**⚠️ This doesn't call task.defer due to multiple issues. Instead, coroutine.resume is called together with a task.wait().**
 
 #### Using delay
-
-**⚠️ This doesn't call task.delay due to multiple issues. Instead, coroutine.resume is called together with a heartbeat.**
 
 ```lua
 threads.delay(true, time, function, ...)
@@ -34,9 +33,12 @@ end)
 
 threads.defer(false, function, ...) -- can be threads.spawn and threads.resume too
 ```
+**⚠️ This doesn't call task.defer due to multiple issues. Instead, coroutine.resume is called together with a task.wait().**
 
 #### Using delay
 
 ```lua
 threads.delay(false, time, function, ...)
 ```
+**⚠️ This doesn't call task.delay due to multiple issues. Instead, coroutine.resume is called together with a task.wait(time).**
+
