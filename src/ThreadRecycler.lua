@@ -1,24 +1,7 @@
 --!strict
 --!native
-
--- Version 0.2.1-a.1
+-- Version 0.2.1-a.2
 --@illinois_roadbuff
---[[
-⚠️ Using signals is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely.
-
-API (using signal):
-local threads = require(module)
-function(index, ...)
-threads.recycle(index) -- call when completed
-end)
-threads.defer(true, function, ...) -can be threads.spawn too
-
-API (not using signal):
-local threads = require(module)
-function(...)
-end)
-threads.defer(false, function, ...) -can be threads.spawn too
-]]
 
 local t = {} -- t: Threads
 t.__index = t
@@ -83,6 +66,7 @@ function t:_y(closeThread: boolean)
 	while not closeThread do
 		t._call(coroutine.yield())
 	end
+	return
 end
 
 function t._createThread(UseSignal: boolean)
@@ -112,7 +96,7 @@ function t.spawn<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
 		r._o[i - 1] = nil
 		i -= 1
 		t._createThread(UseSignal)
-		r.spawn(UseSignal, callback, ...) 
+		t.spawn(UseSignal, callback, ...) 
 	end
 end
 
@@ -132,7 +116,7 @@ function t.wrap<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
 		r._o[i - 1] = nil
 		i -= 1
 		t._createThread(UseSignal)
-		r.wrap(UseSignal, callback, ...) 
+		t.wrap(UseSignal, callback, ...) 
 	end
 end
 
@@ -154,7 +138,7 @@ function t.defer<T...>(UseSignal:boolean, callback: (T...) -> nil, ...: T...)
 		r._o[i - 1] = nil
 		i -= 1
 		t._createThread(UseSignal)
-		r.defer(UseSignal, callback, ...)
+		t.defer(UseSignal, callback, ...)
 	end
 end
 
@@ -176,7 +160,7 @@ function t.delay<T...>(UseSignal, time:number, callback: (T...) -> nil, ...: T..
 		r._o[i - 1] = nil
 		i -= 1
 		t._createThread(UseSignal)
-		r.delay(UseSignal, t, callback, ...)
+		t.delay(UseSignal, t, callback, ...)
 	end
 end
 
