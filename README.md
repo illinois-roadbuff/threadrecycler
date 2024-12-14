@@ -16,7 +16,7 @@ end)
 
 threads.defer(true, function, ...) -- can be threads.spawn and threads.wrap too
 ```
-**⚠️ This doesn't call task.defer due to multiple issues. Instead, coroutine.resume is called together with a task.wait().**
+**⚠️ This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait().**
 
 #### Using delay
 
@@ -33,12 +33,12 @@ end)
 
 threads.defer(false, function, ...) -- can be threads.spawn and threads.resume too
 ```
-**⚠️ This doesn't call task.defer due to multiple issues. Instead, coroutine.resume is called together with a task.wait().**
+**⚠️ This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait().**
 
 #### Using delay
 
 ```lua
 threads.delay(false, time, function, ...)
 ```
-**⚠️ This doesn't call task.delay due to multiple issues. Instead, coroutine.resume is called together with a task.wait(time).**
+**⚠️ This doesn't call task.delay() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait(time).**
 
