@@ -1,5 +1,5 @@
 # ThreadRecycler
-Recycle and reuse threads! 
+Recycle and reuse threads 
 Licensed under MIT (open-source)
 
 ## API
