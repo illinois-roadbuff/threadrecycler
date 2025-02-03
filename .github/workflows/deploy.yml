@@ -1,15 +1,13 @@
 name: Deploy Nextra from docs/ to GitHub Pages
 
-on:
-  push:
-    branches:
-      - main # Change this to your default branch
 
 permissions:
   contents: write
 
 on:
-  push:
+  push:   
+   branches:
+      - main # Change this to your default branch
 
 jobs:
   build:
@@ -32,12 +30,12 @@ jobs:
       run: pnpm install
 
 
-      - name: Build and export site
-        run:  cd docs
+    - name: Build and export site
+      run:  cd docs
           pnpm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/out
