@@ -29,12 +29,12 @@ export default async function RootLayout({ children }) {
     <Navbar
       logo={
         <div>
-          <b>Nextra</b>{' '}
-          <span style={{ opacity: '60%' }}>The Next Docs Builder</span>
+          <b>ThreadRecycler</b>{' '}
+          <span style={{ opacity: '60%' }}>Recycle and Reuse Threads</span>
         </div>
       }
-      // Next.js discord server
-      chatLink="https://discord.gg/hEM84NMkRv"
+    
+      chatLink="https://discord.gg/sd4XfAqNF9"
     />
   )
   return (
@@ -42,11 +42,11 @@ export default async function RootLayout({ children }) {
       <Head faviconGlyph="✦" />
       <body>
         <Layout
-          banner={<Banner storageKey="Nextra 2">Nextra 2 Alpha</Banner>}
+          banner={<Banner storageKey="Nextra 2">⚠️ This has not been used in any production enviroments! </Banner>}
           navbar={navbar}
-          footer={<Footer>MIT {new Date().getFullYear()} © Nextra.</Footer>}
+          footer={<Footer>MIT License Copyright © {new Date().getFullYear()} Illinois_Roadbuff's Development.</Footer>}
           editLink="Edit this page on GitHub"
-          docsRepositoryBase="https://github.com/shuding/nextra/blob/main/examples/docs"
+          docsRepositoryBase="https://github.com/illinois-roadbuff/ThreadRecycler/blob/main/docs/"
           sidebar={{ defaultMenuCollapseLevel: 1 }}
           pageMap={await getPageMap()}
         >
