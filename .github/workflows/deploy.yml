@@ -26,10 +26,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: 'pnpm'
+          cache-dependency-path: docs/pnpm-lock.yaml
 
-      - name: Install dependencies 🔧
-        run: npm install
+      - name: Install pnpm 🔧
+        run: corepack enable && corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies 📦
+        run: pnpm install
+        working-directory: docs  # Run inside /docs
 
       - name: Setup Pages ⚙️
         uses: actions/configure-pages@v4
@@ -37,12 +42,13 @@ jobs:
           static_site_generator: next
 
       - name: Build and Export with Next.js 🏗️
-        run: npx next build && npx next export
+        run: pnpm next build && pnpm next export
+        working-directory: docs  # Run inside /docs
 
       - name: Upload artifact 📡
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: docs/out  # Upload the output folder from /docs
 
   deploy:
     environment:
