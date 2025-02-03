@@ -1,0 +1,56 @@
+import { Callout } from 'nextra/components'
+
+<Callout type="info">
+threads[method](callback? :: boolean, functiontorecycle: (), ... or other arguments)
+</Callout>
+
+## API
+
+<Callout type="warning">
+    Manually recycling is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely. Misusing signals may result in unexpected behavior.
+</Callout>
+
+### Manually recycling
+
+```lua
+local threads = require(module)
+function(index, ...)
+threads.recycle(index) -- call when completed
+end)
+
+threads.defer(true, function, ...) -- can be threads.spawn and threads.wrap too
+```
+
+<Callout type="warning">
+    This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait().
+</Callout>
+
+#### Using delay
+
+```lua
+threads.delay(true, time, function, ...)
+```
+
+### Automatically recycling
+
+```lua
+local threads = require(module)
+function(...)
+end)
+
+threads.defer(false, function, ...) -- can be threads.spawn and threads.resume too
+```
+
+<Callout type="warning">
+    This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait().
+</Callout>
+
+
+#### Using delay
+
+```lua
+threads.delay(false, time, function, ...)
+```
+<Callout type="warning">
+    This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait(n).
+</Callout>
