@@ -44,7 +44,7 @@ jobs:
           static_site_generator: next
 
       - name: Build and Export with Next.js 🏗️
-        run: pnpm next build && pnpm next export
+        run: pnpm next build
         working-directory: docs  # Run inside /docs
 
       - name: Upload artifact 📡
