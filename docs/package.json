@@ -3,7 +3,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "next build && next export",
+    "build": "next build",
     "deploy": "rm -rf docs/out && next build && next export -o docs/out && touch docs/out/.nojekyll && git subtree push --prefix docs/out origin gh-pages",
     "dev": "next --turbopack",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
