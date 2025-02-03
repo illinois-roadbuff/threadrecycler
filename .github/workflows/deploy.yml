@@ -16,11 +16,16 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
+
+      - name: Install pnpm 📦
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10  # Adjust to your desired pnpm version
 
       - name: Setup Node.js ⚙️
         uses: actions/setup-node@v4
@@ -28,9 +33,6 @@ jobs:
           node-version: 18
           cache: 'pnpm'
           cache-dependency-path: docs/pnpm-lock.yaml
-
-      - name: Install pnpm 🔧
-        run: corepack enable && corepack prepare pnpm@latest --activate
 
       - name: Install dependencies 📦
         run: pnpm install
