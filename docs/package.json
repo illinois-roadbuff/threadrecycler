@@ -1,6 +1,7 @@
 {
-  "name": "example-docs",
+  "name": "ThreadRecycler",
   "license": "MIT",
+  "author": "Illinois_Roadbuff's Development",
   "private": true,
   "scripts": {
     "build": "next build",
