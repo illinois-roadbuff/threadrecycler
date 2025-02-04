@@ -14,5 +14,5 @@ export default withNextra({
   images: {
   unoptimized: true,  
   },
-   basePath: '/ThreadRecycler',
+   basePath: '/threadrecycler',
 })

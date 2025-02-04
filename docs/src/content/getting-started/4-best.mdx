@@ -1,0 +1,7 @@
+import { Callout } from 'nextra/components'
+
+## Best Practices
+<Callout type="tip">
+    Try to stick with `ThreadRecycler.wrap` or `ThreadRecycler.spawn` to prevent possible issues.
+    Refrain from using unsafe functions as it may cause major issues. Use `ThreadRecycler.wait()` instead of `task.wait()`.
+</Callout>

@@ -1,8 +1,26 @@
-import { Callout } from 'nextra/components'
+import { Callout, Steps } from 'nextra/components'
 
 # Installation
 
-Head over to releases and download the rbxm file from the latest version. Insert the rbxm file to Roblox Studio. 
+<Steps>
+
+### Installing Github Releases
+
+Head over to releases and download the `.rbxm` file from the latest version (recommended to use a stable version). Then, insert the `.rbxm` file into Roblox Studio. 
 <Callout type="info">
-    It is recommended to place the module under ReplicatedStorage, however you may place it where you'd like. 
+    It's recommended to place the module under `ReplicatedStorage`, however you may place it wherever you'd like. 
 </Callout>
+
+<Callout type="warning">
+    Although I may provide `.lua` files, it's not recommended to use them over `.rbxm` files in this case.
+</Callout>
+
+### Requiring ThreadRecycler
+
+To use ThreadRecycler, require the module in your script:
+```lua copy filename="client-or-server" {1}
+local ThreadRecycler = require(game.GetService(game, "ReplicatedStorage").ThreadRecycler) -- p.s. .GetService is faster; Never knew that huh?
+```
+### You are good to go! Check out the API!
+
+</Steps>

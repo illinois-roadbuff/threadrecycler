@@ -1,56 +1,121 @@
 import { Callout } from 'nextra/components'
 
-<Callout type="info">
-threads[method](callback? :: boolean, functiontorecycle: (), ... or other arguments)
-</Callout>
-
-## API
-
-<Callout type="warning">
-    Manually recycling is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) will yield (or pause) the script entirely. Misusing signals may result in unexpected behavior.
-</Callout>
+## Important: Manually recycling vs. automatically recycling
+### Automatically recycling
+```lua
+ThreadRecycler.spawn(false, function(...)
+    print("Thread executed")
+end)
+```
+```lua
+local function foo(...)
+    print("foo")
+end)
+ThreadRecycler.spawn(false, foo, ...)
+```
 
 ### Manually recycling
-
+The accompanying function **MUST HAVE** an index whether you're recycling or not. 
 ```lua
-local threads = require(module)
-function(index, ...)
-threads.recycle(index) -- call when completed
+ThreadRecycler.spawn(true, function(index: number, ...)
+    print("Thread executed")
+    ThreadRecycler.recycle(index) -- once you are finished
 end)
-
-threads.defer(true, function, ...) -- can be threads.spawn and threads.wrap too
+```
+```lua
+local function foo(index, ...)
+    ThreadRecycler.recycle(index)
+end)
+ThreadRecycler.spawn(true, foo, ...)
 ```
 
 <Callout type="warning">
-    This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait().
-</Callout>
-
-#### Using delay
-
-```lua
-threads.delay(true, time, function, ...)
-```
-
-### Automatically recycling
-
-```lua
-local threads = require(module)
-function(...)
-end)
-
-threads.defer(false, function, ...) -- can be threads.spawn and threads.resume too
-```
-
-<Callout type="warning">
-    This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait().
+    Manually recycling is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) or the funtion that you're providing will yield (or pause) the script entirely.
 </Callout>
 
 
-#### Using delay
+## API Reference
 
+### `recycler.spawn(UseSignal: boolean, callback: function, ...: any)`
+Creates and runs a thread immediately using `task.spawn()`. If `UseSignal` is true, the function must have an index.
 ```lua
-threads.delay(false, time, function, ...)
+ThreadRecycler.spawn(false, function() -- function(index: number) if use signal == true
+    print("Thread executed")
+end)
+```
+
+### `recycler.defer(UseSignal: boolean, callback: function, ...: any)`
+Executes a function on the next `RunService.Heartbeat`.
+```lua
+ThreadRecycler.defer(false, function()
+    print("Deferred execution")
+end)
+```
+
+### `recycler.gooddefer(UseSignal: boolean, callback: function, ...: any)`
+Executes a function on the next `RunService.Heartbeat`. Works the same way as `ThreadRecycler.defer`, but doesn't have a function overhead.
+```lua
+ThreadRecycler.gooddefer(false, function()
+    print("Executed on Heartbeat")
+end)
+```
+
+### `recycler.unsafedefer(UseSignal: boolean, callback: function, ...: any)`
+Uses `task.defer()` to execute the function at the end of the current execution cycle.
+```lua
+ThreadRecycler.unsafedefer(false, function()
+    print("Unsafe defer execution")
+end)
+```
+<Callout type="caution">
+    It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.defer should not be called on a thread that is already 'deferred' in the task library)
+</Callout>
+
+### `recycler.unsafedelay(UseSignal: boolean, time: number, callback: function, ...: any)`
+Uses `task.delay()` to execute the function after some time has been elapsed.
+```lua
+ThreadRecycler.unsafedelay(1, false, function()
+    print("Unsafe delay execution")
+end)
+```
+<Callout type="caution">
+    It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.delay should not be called on a thread that is already 'waiting' in the task library)
+</Callout>
+
+### `recycler.delay(UseSignal: boolean, time: number, callback: function, ...: any)`
+Uses `ThreadRecycler.wait()` to execute the function after some time has been elapsed.
+```lua
+ThreadRecycler.delay(false, function()
+    print("Defer execution")
+end)
+```
+<Callout type="caution">
+    It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.delay should not be called on a thread that is already 'waiting' in the task library)
+</Callout>
+
+### `recycler.wait(seconds: number | nil)`
+Pauses execution for a set duration using `os.clock()`.
+```lua
+ThreadRecycler.wait(2) -- Waits for 2 seconds
+```
+<Callout type="info">
+    This function replaces `task.wait()`.
+</Callout>
+
+### `recycler.recycle(index: number)`
+Recycles a thread back into the pool.
+```lua
+ThreadRecycler.recycle(1) -- Recycle thread at index 1
+```
+
+### `recycler.getstat(stat: string) -> boolean, number | string`
+Retrieves statistics about thread usage. Works on Count, Recycled, and Created.
+```lua
+local success, count = ThreadRecycler.getstat("Count") -- functions like a pcall
+if success then
+    print("Active threads:", count)
+end
 ```
 <Callout type="warning">
-    This doesn't call task.defer() due to multiple issues. Instead, coroutine.resume() is called together with a task.wait(n).
+    ThreadStats must be set to true in order for this function to work! Configure this in the module.
 </Callout>

@@ -9,7 +9,7 @@ export const metadata = {
   title: {
     template: '%s - Nextra'
   },
-  description: 'Nextra: the Next.js site builder',
+  description: 'Recycle and Reuse Threads!',
   applicationName: 'Nextra',
   generator: 'Next.js',
   appleWebApp: {
@@ -42,11 +42,11 @@ export default async function RootLayout({ children }) {
       <Head faviconGlyph="✦" />
       <body>
         <Layout
-          banner={<Banner storageKey="Nextra 2">⚠️ This has not been used in any production enviroments! </Banner>}
+          banner={<Banner storageKey="Nextra 2">⚠️ Although stable, this has not been used in any mass production enviroments. </Banner>}
           navbar={navbar}
           footer={<Footer>MIT License Copyright © {new Date().getFullYear()} Illinois_Roadbuff's Development.</Footer>}
           editLink="Edit this page on GitHub"
-          docsRepositoryBase="https://github.com/illinois-roadbuff/ThreadRecycler/blob/main/docs/"
+          docsRepositoryBase="https://github.com/illinois-roadbuff/threadrecycler/blob/main/docs/"
           sidebar={{ defaultMenuCollapseLevel: 1 }}
           pageMap={await getPageMap()}
         >
