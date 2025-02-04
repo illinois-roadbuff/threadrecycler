@@ -89,9 +89,6 @@ ThreadRecycler.delay(1, false, function()
     print("Defer execution")
 end)
 ```
-<Callout type="error">
-    It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.delay should not be called on a thread that is already 'waiting' in the task library)
-</Callout>
 
 ### `recycler.wait(seconds: number | nil)`
 Pauses execution for a set duration using `os.clock()`.
