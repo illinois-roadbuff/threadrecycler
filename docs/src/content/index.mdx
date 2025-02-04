@@ -2,7 +2,7 @@ import { Bleed, Table, Callout } from 'nextra/components'
 
 # ThreadRecycler
 
-An efficient thread management module written in Luau for Roblox. (Strictly typed) (Also my first public module)
+An efficient thread management module written in Luau for Roblox. (Strictly typed) (Additionally my first public module)
 
 ## Performance
 
@@ -13,7 +13,7 @@ Fewer resources are wasted on unnecessary threads, leading to faster execution.
 While ThreadRecycler helps optimize thread usage, it may depend the number of active threads.
 
 ## Limitations
-* Must replace `task.wait()` with `ThreadRecycler.wait()` to prevent issues in the task library. (more context on that in the API reference)
+* Must replace `task.wait()` with `ThreadRecycler.wait()` to prevent issues in the task library. (more context in the API reference)
 * Risky to use `task.defer()` and `task.delay()` due to task library issues; must use an alternative. 
 * Module may be in needs of major improvements...
 
@@ -24,7 +24,7 @@ While ThreadRecycler helps optimize thread usage, it may depend the number of ac
 * In addition to this being my first public module, this is also my first benchmark? 
 
 <Callout type="info">
-This doesn't measure in FPS (e.g 60 fps), it uses ms instead. 60 FPS -> 1/60
+This doesn't measure in FPS (e.g 60 fps); it uses ms instead. 60 FPS -> 1/60
 </Callout>
 
 ![Compareofwrap|1963x112,20%](../app/xygraphwrap.png)
@@ -87,6 +87,6 @@ This doesn't measure in FPS (e.g 60 fps), it uses ms instead. 60 FPS -> 1/60
 </Table>
 
 <Callout type="info">
-Benchmark Roblox place is in the GitHub repository. /root/benchmarks
+The benchmark place file is in the GitHub repository. /root/benchmarks
 </Callout>
 
