@@ -36,6 +36,15 @@ ThreadRecycler.spawn(true, foo, ...)
 
 ## API Reference
 
+
+### `recycler.wrap(UseSignal: boolean, callback: function, ...: any)`
+Creates and runs a thread using `coroutine.create()` and `coroutine.resume()`. If `UseSignal` is true, the function must have an index.
+```lua copy filename="some-script.lua"
+ThreadRecycler.wrap(false, function() -- function(index: number) if use signal == true
+    print("Thread executed")
+end)
+```
+
 ### `recycler.spawn(UseSignal: boolean, callback: function, ...: any)`
 Creates and runs a thread immediately using `task.spawn()`. If `UseSignal` is true, the function must have an index.
 ```lua copy filename="some-script.lua"
