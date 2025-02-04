@@ -7,7 +7,7 @@ Licensed under MIT (open-source)
 Check out documentation and installation at
 https://illinois-roadbuff.github.io/threadrecycler/docs
 
-P.S. "UseSignal" should be "ManualRecycle"
+P.S. "UseSignal" should be "ManualRecycle."
 In previous vesions, FastSignal/GoodSignal was used 
 
 (This is my first open-source module!)
