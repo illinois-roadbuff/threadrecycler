@@ -1,11 +1,11 @@
 --!strict
 --!native
--- Version 0.2.2-a.3
+-- Version 0.2.2-a.4
 --@Illinois_Roadbuff
 
 -- // Thread Recycler; Recycle and reuse threads!
 
-local RunService = game:GetService("RunService")
+local RunService:RunService = game.GetService(game, "RunService") :: RunService -- Shhh, a lot faster :) 
 
 local threads = {} -- t: Threads
 threads.__index = threads
