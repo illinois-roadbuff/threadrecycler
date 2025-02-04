@@ -1,6 +1,6 @@
 --!strict
 --!native
--- Version 0.2.2-a.4
+-- Version 0.2.2-a.5
 --@Illinois_Roadbuff
 
 -- // Thread Recycler; Recycle and reuse threads!
@@ -18,9 +18,9 @@ type threads = {
 local recycler = {} 
 recycler.__index = recycler
 
-local ThreadStatsEnabled = true
+local ThreadStatsEnabled:boolean = true--enables recording of stats
 
-local ThreadStats = {
+local ThreadStats:{ Count: number, Created: number, Recycled: number } = {
 	["Recycled"] = 0,
 	["Created"] = 0,
 	["Count"] = 0,
@@ -46,10 +46,13 @@ export type recycler = { -- r: Recycling pool?
 
 setmetatable(recycler::recycler, threads)
 
-recycler._tcount = 30 :: number --negative = dynamic
+-- Recycler config
+local StartOnSignal:boolean = true :: boolean --start with manual recycling?
+recycler._tcount = 30 :: number --initial amount of threads
+
 recycler._open = {} :: {threads}
 
-local StartOnSignal:boolean = true :: boolean
+
 
 local threadMetatable = {
 	__index = function(thread, key:string)
