@@ -7,7 +7,7 @@ import 'nextra-theme-docs/style.css'
 export const metadata = {
   metadataBase: new URL('https://nextra.site'),
   title: {
-    template: '%s - Nextra'
+    template: '%s - Illinois_Roadbuffs Development`
   },
   description: 'Recycle and Reuse Threads!',
   applicationName: 'Nextra',
