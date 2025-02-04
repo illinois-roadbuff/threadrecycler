@@ -2,12 +2,12 @@ import { Callout } from 'nextra/components'
 
 ## Important: Manually recycling vs. automatically recycling
 ### Automatically recycling
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.spawn(false, function(...)
     print("Thread executed")
 end)
 ```
-```lua
+```lua copy filename="some-script.lua"
 local function foo(...)
     print("foo")
 end)
@@ -16,13 +16,13 @@ ThreadRecycler.spawn(false, foo, ...)
 
 ### Manually recycling
 The accompanying function **MUST HAVE** an index whether you're recycling or not. 
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.spawn(true, function(index: number, ...)
     print("Thread executed")
     ThreadRecycler.recycle(index) -- once you are finished
 end)
 ```
-```lua
+```lua copy filename="some-script.lua"
 local function foo(index, ...)
     ThreadRecycler.recycle(index)
 end)
@@ -38,7 +38,7 @@ ThreadRecycler.spawn(true, foo, ...)
 
 ### `recycler.spawn(UseSignal: boolean, callback: function, ...: any)`
 Creates and runs a thread immediately using `task.spawn()`. If `UseSignal` is true, the function must have an index.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.spawn(false, function() -- function(index: number) if use signal == true
     print("Thread executed")
 end)
@@ -46,7 +46,7 @@ end)
 
 ### `recycler.defer(UseSignal: boolean, callback: function, ...: any)`
 Executes a function on the next `RunService.Heartbeat`.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.defer(false, function()
     print("Deferred execution")
 end)
@@ -54,7 +54,7 @@ end)
 
 ### `recycler.gooddefer(UseSignal: boolean, callback: function, ...: any)`
 Executes a function on the next `RunService.Heartbeat`. Works the same way as `ThreadRecycler.defer`, but doesn't have a function overhead.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.gooddefer(false, function()
     print("Executed on Heartbeat")
 end)
@@ -62,40 +62,40 @@ end)
 
 ### `recycler.unsafedefer(UseSignal: boolean, callback: function, ...: any)`
 Uses `task.defer()` to execute the function at the end of the current execution cycle.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.unsafedefer(false, function()
     print("Unsafe defer execution")
 end)
 ```
-<Callout type="caution">
+<Callout type="error">
     It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.defer should not be called on a thread that is already 'deferred' in the task library)
 </Callout>
 
 ### `recycler.unsafedelay(UseSignal: boolean, time: number, callback: function, ...: any)`
 Uses `task.delay()` to execute the function after some time has been elapsed.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.unsafedelay(1, false, function()
     print("Unsafe delay execution")
 end)
 ```
-<Callout type="caution">
+<Callout type="error">
     It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.delay should not be called on a thread that is already 'waiting' in the task library)
 </Callout>
 
 ### `recycler.delay(UseSignal: boolean, time: number, callback: function, ...: any)`
 Uses `ThreadRecycler.wait()` to execute the function after some time has been elapsed.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.delay(false, function()
     print("Defer execution")
 end)
 ```
-<Callout type="caution">
+<Callout type="error">
     It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.delay should not be called on a thread that is already 'waiting' in the task library)
 </Callout>
 
 ### `recycler.wait(seconds: number | nil)`
 Pauses execution for a set duration using `os.clock()`.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.wait(2) -- Waits for 2 seconds
 ```
 <Callout type="info">
@@ -104,13 +104,13 @@ ThreadRecycler.wait(2) -- Waits for 2 seconds
 
 ### `recycler.recycle(index: number)`
 Recycles a thread back into the pool.
-```lua
+```lua copy filename="some-script.lua"
 ThreadRecycler.recycle(1) -- Recycle thread at index 1
 ```
 
 ### `recycler.getstat(stat: string) -> boolean, number | string`
 Retrieves statistics about thread usage. Works on Count, Recycled, and Created.
-```lua
+```lua copy filename="some-script.lua"
 local success, count = ThreadRecycler.getstat("Count") -- functions like a pcall
 if success then
     print("Active threads:", count)
