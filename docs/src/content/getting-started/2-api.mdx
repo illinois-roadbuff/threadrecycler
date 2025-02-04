@@ -37,23 +37,23 @@ ThreadRecycler.spawn(true, foo, ...)
 ## API Reference
 
 
-### `recycler.wrap(UseSignal: boolean, callback: function, ...: any)`
-Creates and runs a thread using `coroutine.create()` and `coroutine.resume()`. If `UseSignal` is true, the function must have an index.
+### `recycler.wrap(ManualRecycle: boolean, callback: function, ...: any)`
+Creates and runs a thread using `coroutine.create()` and `coroutine.resume()`. If `ManualRecycle` is true, the function must have an index.
 ```lua copy filename="some-script.lua"
 ThreadRecycler.wrap(false, function() -- function(index: number) if use signal == true
     print("Thread executed")
 end)
 ```
 
-### `recycler.spawn(UseSignal: boolean, callback: function, ...: any)`
-Creates and runs a thread immediately using `task.spawn()`. If `UseSignal` is true, the function must have an index.
+### `recycler.spawn(ManualRecycle: boolean, callback: function, ...: any)`
+Creates and runs a thread immediately using `task.spawn()`. If `ManualRecycle` is true, the function must have an index.
 ```lua copy filename="some-script.lua"
 ThreadRecycler.spawn(false, function() -- function(index: number) if use signal == true
     print("Thread executed")
 end)
 ```
 
-### `recycler.defer(UseSignal: boolean, callback: function, ...: any)`
+### `recycler.defer(ManualRecycle: boolean, callback: function, ...: any)`
 Executes a function on the next `RunService.Heartbeat`.
 ```lua copy filename="some-script.lua"
 ThreadRecycler.defer(false, function()
@@ -61,7 +61,7 @@ ThreadRecycler.defer(false, function()
 end)
 ```
 
-### `recycler.gooddefer(UseSignal: boolean, callback: function, ...: any)`
+### `recycler.gooddefer(ManualRecycle: boolean, callback: function, ...: any)`
 Executes a function on the next `RunService.Heartbeat`. Works the same way as `ThreadRecycler.defer`, but doesn't have a function overhead.
 ```lua copy filename="some-script.lua"
 ThreadRecycler.gooddefer(false, function()
@@ -69,7 +69,7 @@ ThreadRecycler.gooddefer(false, function()
 end)
 ```
 
-### `recycler.unsafedefer(UseSignal: boolean, callback: function, ...: any)`
+### `recycler.unsafedefer(ManualRecycle: boolean, callback: function, ...: any)`
 Uses `task.defer()` to execute the function at the end of the current execution cycle.
 ```lua copy filename="some-script.lua"
 ThreadRecycler.unsafedefer(false, function()
@@ -80,7 +80,7 @@ end)
     It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.defer should not be called on a thread that is already 'deferred' in the task library)
 </Callout>
 
-### `recycler.unsafedelay(UseSignal: boolean, time: number, callback: function, ...: any)`
+### `recycler.unsafedelay(ManualRecycle: boolean, time: number, callback: function, ...: any)`
 Uses `task.delay()` to execute the function after some time has been elapsed.
 ```lua copy filename="some-script.lua"
 ThreadRecycler.unsafedelay(1, false, function()
@@ -91,7 +91,7 @@ end)
     It's STRONGLY recommended if you refrain from using this function; may lead to warnings and issues in the task library. (e.g. task.delay should not be called on a thread that is already 'waiting' in the task library)
 </Callout>
 
-### `recycler.delay(UseSignal: boolean, time: number, callback: function, ...: any)`
+### `recycler.delay(ManualRecycle: boolean, time: number, callback: function, ...: any)`
 Uses `ThreadRecycler.wait()` to execute the function after some time has been elapsed.
 ```lua copy filename="some-script.lua"
 ThreadRecycler.delay(1, false, function()
