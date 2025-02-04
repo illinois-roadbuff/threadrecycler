@@ -45,7 +45,7 @@ export default async function RootLayout({ children }) {
           banner={<Banner storageKey="Nextra 2">⚠️ Although stable, this hasn't been used in any mass production enviroments. </Banner>}
           navbar={navbar}
           footer={<Footer>MIT License Copyright © {new Date().getFullYear()} Illinois_Roadbuff.</Footer>}
-          feedback={{ content: "Question? Give me feedback" }}
+          feedback={{ content: "Question(s)? Give me feedback" }}
           editLink="Edit this page on GitHub"
           docsRepositoryBase="https://github.com/illinois-roadbuff/threadrecycler/blob/main/docs/"
           sidebar={{ defaultMenuCollapseLevel: 1 }}
