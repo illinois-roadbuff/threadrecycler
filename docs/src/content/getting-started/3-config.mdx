@@ -1,0 +1,15 @@
+import { Callout } from 'nextra/components'
+
+## Configuration
+Some internal configs can be modified in the module:
+```lua copy filename="ThreadRecycler.lua" {3-5}
+local ThreadStatsEnabled:boolean = true--enables recording of stats
+
+-- Recycler config
+local StartOnSignal:boolean = true :: boolean --start with manual recycling?
+recycler._tcount = 30 :: number --initial amount of threads
+```
+<Callout type="info">
+    Changing the initial thread count to a negative number can work.
+</Callout>
+
