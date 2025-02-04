@@ -1,5 +1,4 @@
-import { Bleed } from 'nextra/components' 
-import { Table, Thead, Tbody, Tr, Th, Td } from '@components/ui/table';
+import { Bleed, Table } from 'nextra/components' 
 
 # ThreadRecycler
 
@@ -34,176 +33,18 @@ This doesn't measure in FPS (e.g 60 fps), it uses ms instead. 60 FPS -> 1/60
 </Callout>
 
 <Table>
-  <Thead>
-    <Tr>
-      <Th>Workload</Th>
-      <Th>Method</Th>
-      <Th>Manual Recycling</Th>
-      <Th>Auto Recycling</Th>
-      <Th>Regular Use</Th>
-      <Th>Difference (Manual - Regular)</Th>
-      <Th>Difference (Auto - Regular)</Th>
-    </Tr>
-  </Thead>
-  <Tbody>
-    <Tr>
-      <Td rowspan="4">100</Td>
-      <Td>Recycled Spawn</Td>
-      <Td>0.050934</Td>
-      <Td>0.051028</Td>
-      <Td>0.052784</Td>
-      <Td>-0.001850</Td>
-      <Td>-0.001756</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Defer</Td>
-      <Td>0.016645</Td>
-      <Td>0.016761</Td>
-      <Td>0.052784</Td>
-      <Td>-0.036139</Td>
-      <Td>-0.036023</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Bad Defer</Td>
-      <Td>0.051750</Td>
-      <Td>0.051310</Td>
-      <Td>0.052784</Td>
-      <Td>-0.001034</Td>
-      <Td>-0.001474</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Wrap</Td>
-      <Td>0.051318</Td>
-      <Td>0.051484</Td>
-      <Td>0.052118</Td>
-      <Td>-0.000800</Td>
-      <Td>-0.000634</Td>
-    </Tr>
-  </Tbody>
-  <Tbody>
-    <Tr>
-      <Td rowspan="4">1100</Td>
-      <Td>Recycled Spawn</Td>
-      <Td>0.251524</Td>
-      <Td>0.246071</Td>
-      <Td>0.243614</Td>
-      <Td>+0.007910</Td>
-      <Td>+0.002457</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Defer</Td>
-      <Td>0.016871</Td>
-      <Td>0.016805</Td>
-      <Td>0.238632</Td>
-      <Td>-0.221761</Td>
-      <Td>-0.221827</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Bad Defer</Td>
-      <Td>0.245513</Td>
-      <Td>0.241942</Td>
-      <Td>0.238632</Td>
-      <Td>+0.006881</Td>
-      <Td>+0.003310</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Wrap</Td>
-      <Td>0.244087</Td>
-      <Td>0.236169</Td>
-      <Td>0.249500</Td>
-      <Td>-0.005413</Td>
-      <Td>-0.013331</Td>
-    </Tr>
-  </Tbody>
-  <Tbody>
-    <Tr>
-      <Td rowspan="4">2100</Td>
-      <Td>Recycled Spawn</Td>
-      <Td>0.433967</Td>
-      <Td>0.427168</Td>
-      <Td>0.435914</Td>
-      <Td>-0.001947</Td>
-      <Td>-0.008746</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Defer</Td>
-      <Td>0.016987</Td>
-      <Td>0.018037</Td>
-      <Td>0.428708</Td>
-      <Td>-0.411721</Td>
-      <Td>-0.410671</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Bad Defer</Td>
-      <Td>0.253181</Td>
-      <Td>0.225600</Td>
-      <Td>0.428708</Td>
-      <Td>-0.175527</Td>
-      <Td>-0.203108</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Wrap</Td>
-      <Td>0.419219</Td>
-      <Td>0.429620</Td>
-      <Td>0.445877</Td>
-      <Td>-0.026658</Td>
-      <Td>-0.016257</Td>
-    </Tr>
-  </Tbody>
-  <Tbody>
-    <Tr>
-      <Td rowspan="4">3100</Td>
-      <Td>Recycled Spawn</Td>
-      <Td>0.620988</Td>
-      <Td>0.603288</Td>
-      <Td>0.604013</Td>
-      <Td>+0.016975</Td>
-      <Td>-0.000725</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Defer</Td>
-      <Td>0.018562</Td>
-      <Td>0.020192</Td>
-      <Td>0.616689</Td>
-      <Td>-0.598127</Td>
-      <Td>-0.596497</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Bad Defer</Td>
-      <Td>0.616978</Td>
-      <Td>0.607503</Td>
-      <Td>0.616689</Td>
-      <Td>+0.000289</Td>
-      <Td>-0.009186</Td>
-    </Tr>
-    <Tr>
-      <Td>Recycled Wrap</Td>
-      <Td>0.614544</Td>
-      <Td>0.600208</Td>
-      <Td>0.618695</Td>
-      <Td>-0.004151</Td>
-      <Td>-0.018487</Td>
-    </Tr>
-  </Tbody>
-</Table>
-
-<Callout type="info">
-Benchmark Roblox place is in the GitHub respiratory. /root/benchmarks
-</Callout>
-
-<Table>
-  <Thead>
-    <Tr className="bg-gray-800 text-white">
-      <Th>Workload</Th>
-      <Th>Method</Th>
-      <Th>Manual Recycling</Th>
-      <Th>Auto Recycling</Th>
-      <Th>Regular Use</Th>
-      <Th>Difference (Manual - Regular)</Th>
-      <Th>Difference (Auto - Regular)</Th>
-    </Tr>
-  </Thead>
-  <Tbody>
+  <thead>
+    <Table.Tr>
+      <Table.Th>Workload</Table.Th>
+      <Table.Th>Method</Table.Th>
+      <Table.Th>Manual Recycling</Table.Th>
+      <Table.Th>Auto Recycling</Table.Th>
+      <Table.Th>Regular Use</Table.Th>
+      <Table.Th>Difference (Manual - Regular)</Table.Th>
+      <Table.Th>Difference (Auto - Regular)</Table.Th>
+    </Table.Tr>
+  </thead>
+  <tbody>
     {[
       { workload: 100, method: "Recycled Spawn", manual: 0.050934, auto: 0.051028, regular: 0.052784 },
       { workload: 100, method: "Recycled Defer", manual: 0.016645, auto: 0.016761, regular: 0.052784 },
@@ -224,24 +65,26 @@ Benchmark Roblox place is in the GitHub respiratory. /root/benchmarks
     ].map(({ workload, method, manual, auto, regular }) => {
       const diffManual = (manual - regular).toFixed(6);
       const diffAuto = (auto - regular).toFixed(6);
-
       return (
-        <Tr key={`${workload}-${method}`}>
-          <Td>{workload}</Td>
-          <Td>{method}</Td>
-          <Td>{manual.toFixed(6)}</Td>
-          <Td>{auto.toFixed(6)}</Td>
-          <Td>{regular.toFixed(6)}</Td>
-          <Td className={diffManual < 0 ? "text-green-500" : diffManual > 0 ? "text-red-500" : ""}>
+        <Table.Tr key={`${workload}-${method}`}>
+          <Table.Td>{workload}</Table.Td>
+          <Table.Td>{method}</Table.Td>
+          <Table.Td>{manual.toFixed(6)}</Table.Td>
+          <Table.Td>{auto.toFixed(6)}</Table.Td>
+          <Table.Td>{regular.toFixed(6)}</Table.Td>
+          <Table.Td style={{ color: diffManual < 0 ? 'green' : diffManual > 0 ? 'red' : 'inherit' }}>
             {diffManual}
-          </Td>
-          <Td className={diffAuto < 0 ? "text-green-500" : diffAuto > 0 ? "text-red-500" : ""}>
+          </Table.Td>
+          <Table.Td style={{ color: diffAuto < 0 ? 'green' : diffAuto > 0 ? 'red' : 'inherit' }}>
             {diffAuto}
-          </Td>
-        </Tr>
+          </Table.Td>
+        </Table.Tr>
       );
     })}
-  </Tbody>
+  </tbody>
 </Table>
 
+<Callout type="info">
+Benchmark Roblox place is in the GitHub respiratory. /root/benchmarks
+</Callout>
 
