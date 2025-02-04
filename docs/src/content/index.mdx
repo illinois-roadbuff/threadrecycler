@@ -10,11 +10,12 @@ ThreadRecycler optimizes thread usage by recycling and reusing it, reducing reso
 
 Fewer resources are wasted on unnecessary threads, leading to faster execution.
 
-While ThreadRecycler helps optimize thread usage, it may depend the number of active threads. However, it should never lead to a decrease in performance.
+While ThreadRecycler helps optimize thread usage, it may depend the number of active threads.
 
 ## Limitations
 * Must replace `task.wait()` with `ThreadRecycler.wait()` to prevent issues in the task library. 
 * Risky to use `task.defer()` and `task.delay()` due to task library issues; must use an alternative. 
+* Module may be in needs of major improvements...
 
 ## Benchmarks
 
