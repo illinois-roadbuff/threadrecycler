@@ -85,7 +85,7 @@ end)
 ### `recycler.delay(UseSignal: boolean, time: number, callback: function, ...: any)`
 Uses `ThreadRecycler.wait()` to execute the function after some time has been elapsed.
 ```lua copy filename="some-script.lua"
-ThreadRecycler.delay(false, function()
+ThreadRecycler.delay(1, false, function()
     print("Defer execution")
 end)
 ```
