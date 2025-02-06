@@ -1,8 +1,8 @@
 import { Callout } from 'nextra/components'
 
 ## Example
-```lua copy filename="example.luau" {3-7}
-local ThreadRecycler = require(game.GetService(game, "ReplicatedStorage").ThreadRecycler)
+```lua copy filename="example.luau"
+local ThreadRecycler = require(game:GetService("ReplicatedStorage").ThreadRecycler)
 local PoolConfig = {
 	["InitialThreadCount"] = 10,
 	["CachedLifetime"] = false,
