@@ -17,10 +17,17 @@ Head over to releases and download the `.rbxm` file from the latest version. The
 
 ### Requiring ThreadRecycler and creating a thread pool
 
-To use ThreadRecycler, require the module in your script. Then, create a `ThreadPool`:
+To use ThreadRecycler, require the module in your script. Then, create a `ThreadPool` and set up your config:
 ```lua copy filename="client-or-server" {1}
 local ThreadRecycler = require(game.GetService(game, "ReplicatedStorage").ThreadRecycler) -- p.s. .GetService is faster; Never knew that huh?
-local ThreadPool = ThreadRecycler.erect() -- erect basically means to build or create
+local ThreadPool = ThreadRecycler.erect({ -- erect basically means to build or create
+    ["InitialThreadCount"] = 60, -- Initial thread count 
+	["CachedLifetime"] = 60,  -- Cached lifetime 
+	["EnableStatRecording"] = true, -- Enables recording of stats 
+	["Logger"] = warn, -- Log method; doesn't do anything right now. Coming in the future... 
+	["Debug"] = false -- Debug configuration. Doesn't do anything right now. Coming in the future... 
+})
+
 ```
 ### You are good to go! Check out the API!
 
