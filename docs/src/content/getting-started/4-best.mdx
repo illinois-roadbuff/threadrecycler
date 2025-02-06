@@ -1,9 +1,40 @@
 import { Callout } from 'nextra/components'
 
+## Example
+```lua copy filename="example.luau" {3-7}
+local ThreadRecycler = require(game.GetService(game, "ReplicatedStorage").ThreadRecycler)
+local PoolConfig = {
+	["InitialThreadCount"] = 10,
+	["CachedLifetime"] = false,
+	["EnableStatRecording"] = false,
+	["Logger"] = warn,
+	["Debug"] = false
+}
+local CoroutineThreadPool = ThreadRecycler.erect(PoolConfig)
+local TaskThreadPool = ThreadRecycler.erect(PoolConfig) -- it would be best to keep them both separated
+
+local function test(thread, x)
+    print("Hello!")
+    task.wait(1) -- should not cause any issues since wrap isn't in the task library
+    print("Hello world after 1 second!")
+    -- do some stuff; lets say that it may yield forever or never actually 'end'.
+    CoroutineThreadPool.recycle(CoroutineThreadPool, thread) -- if so, then this would be needed to properly recycle the thread
+end
+
+TaskThreadPool.spawn(TaskThreadPool, function(thread)
+    print("Hello world!")
+    TaskThreadPool.wait(5) -- must be used instead of task.wait() to prevent task library issues
+    print("Hello again after 5 seconds!")
+end)
+
+CoroutineThreadPool.wrap(CoroutineThreadPool, test, 1) 
+
+```
+
 ## Best Practices
 <Callout emoji="📃">
-    Try to stick with `ThreadRecycler.wrap` or `ThreadRecycler.spawn` to prevent possible issues.
-    Refrain from using unsafe functions as it may cause major issues. Use `ThreadRecycler.wait()` instead of `task.wait()`.
+    Try to stick with `ThreadRecycler.wrap` or `ThreadRecycler.spawn` to prevent possible issues. Create different thread pools, separating `.wrap` and `.spawn`.
+    Refrain from using unsafe functions as it may cause major issues. Use `ThreadRecycler.wait()` instead of `task.wait()` if you're not using `.wrap`.
 </Callout>
 
 As this is my first open-sourced module, if you have anything that I could improve on, I'd love to hear!
