@@ -12,7 +12,7 @@ Head over to releases and download the `.rbxm` file from the latest version. The
 </Callout>
 
 <Callout type="warning">
-    Although I may provide `.lua` files, it's not recommended to use them over `.rbxm` files in this case.
+    Although I may provide `.luau` or `.lua` files, it's not recommended to use them over `.rbxm` files in this case.
 </Callout>
 
 ### Requiring ThreadRecycler and creating a thread pool
@@ -20,7 +20,7 @@ Head over to releases and download the `.rbxm` file from the latest version. The
 To use ThreadRecycler, require the module in your script. Then, create a `ThreadPool`:
 ```lua copy filename="client-or-server" {1}
 local ThreadRecycler = require(game.GetService(game, "ReplicatedStorage").ThreadRecycler) -- p.s. .GetService is faster; Never knew that huh?
-local ThreadPool = ThreadRecycler.new()
+local ThreadPool = ThreadRecycler.erect() -- erect basically means to build or create
 ```
 ### You are good to go! Check out the API!
 
