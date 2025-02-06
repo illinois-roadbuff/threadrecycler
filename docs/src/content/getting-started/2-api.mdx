@@ -54,7 +54,7 @@ local ThreadPool = ThreadRecycler.erect({
 ```
 
 ### `ThreadPool.autocompatible()`
-`ThreadPool.autocompatible(ThreadPool, ManualRecycle: boolean, callback: function, ...: any) -> boolean, number | string)`
+`ThreadPool.autocompatible(ThreadPool, callback: function, ...: any) -> boolean, number | string)`
 
 Checks whether the function can support auto recycling.
 
@@ -70,7 +70,7 @@ ThreadPool.autocompatible(ThreadPool, foo, ...) -- > ThreadRecycler: This functi
 </Callout>
 
 ### `ThreadPool.wrap()`
-`ThreadPool.wrap(ThreadPool, ManualRecycle: boolean, callback: function, ...: any)`
+`ThreadPool.wrap(ThreadPool, callback: function, ...: any)`
 
 Creates and runs a thread using `coroutine.create()` and `coroutine.resume()`. 
 ```lua copy filename="some-script.luau"
@@ -80,7 +80,7 @@ end)
 ```
 
 ### `ThreadPool.spawn()`
-`ThreadPool.spawn(ThreadPool, ManualRecycle: boolean, callback: function, ...: any)`
+`ThreadPool.spawn(ThreadPool, callback: function, ...: any)`
 
 Creates and runs a thread immediately using `task.spawn()`. 
 ```lua copy filename="some-script.luau"
@@ -90,7 +90,7 @@ end)
 ```
 
 ### `ThreadPool.defer()`
-`ThreadPool.defer(ThreadPool, ManualRecycle: boolean, callback: function, ...: any)`
+`ThreadPool.defer(ThreadPool, callback: function, ...: any)`
 
 Executes a function on the next `RunService.Heartbeat`.
 ```lua copy filename="some-script.luau"
@@ -100,7 +100,7 @@ end)
 ```
 
 ### `ThreadPool.gooddefer()`
-`ThreadPool.gooddefer(ThreadPool, ManualRecycle: boolean, callback: function, ...: any)`
+`ThreadPool.gooddefer(ThreadPool, callback: function, ...: any)`
 
 Executes a function on the next `RunService.Heartbeat`. Works the same way as `ThreadRecycler.defer`, but doesn't have a function overhead.
 ```lua copy filename="some-script.luau"
@@ -111,7 +111,7 @@ end)
 
 ### `ThreadPool.unsafedefer()`
 
-`ThreadPool.unsafedefer(ThreadPool, ManualRecycle: boolean, callback: function, ...: any)`
+`ThreadPool.unsafedefer(ThreadPool, callback: function, ...: any)`
 Uses `task.defer()` to execute the function at the end of the current execution cycle.
 ```lua copy filename="some-script.luau"
 ThreadPool.unsafedefer(ThreadPool, function()
@@ -123,11 +123,11 @@ end)
 </Callout>
 
 ### `ThreadPool.unsafedelay()`
-`ThreadPool.unsafedelay(ThreadPool, ManualRecycle: boolean, time: number, callback: function, ...: any)`
+`ThreadPool.unsafedelay(ThreadPool, time: number, callback: function, ...: any)`
 
 Uses `task.delay()` to execute the function after some time has been elapsed.
 ```lua copy filename="some-script.luau"
-ThreadPool.unsafedelay(1, ThreadPool, function(thread)
+ThreadPool.unsafedelay(ThreadPool, 1, function(thread)
     print("Unsafe delay execution")
 end)
 ```
@@ -136,7 +136,7 @@ end)
 </Callout>
 
 ### `ThreadPool.delay()`
-`ThreadPool.delay(ThreadPool, ManualRecycle: boolean, time: number, callback: function, ...: any)`
+`ThreadPool.delay(ThreadPool, time: number, callback: function, ...: any)`
 
 Uses `ThreadRecycler.wait()` to execute the function after some time has been elapsed.
 ```lua copy filename="some-script.luau"

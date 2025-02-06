@@ -8,7 +8,6 @@ Updated for: threadrecycler@0.3.0-alpha.4
 You can edit your `ThreadPool` configuration by editing the table.
 
 ```lua copy filename="client-or-server.luau" {3-7}
-local ThreadRecycler = require(game.GetService(game, "ReplicatedStorage").ThreadRecycler) -- p.s. .GetService is faster; Never knew that huh?
 local ThreadPool = ThreadRecycler.erect({ 
 	["InitialThreadCount"] = 60, -- Initial thread count 
 	["CachedLifetime"] = 60,  -- Cached lifetime 
@@ -19,7 +18,7 @@ local ThreadPool = ThreadRecycler.erect({
 ```
 ### Internal Configuration
 Some internal configs can be modified in the module, although it will only be applied if you leave `.erect()` blank:
-```lua copy filename="ThreadRecycler.lua" {2-7}
+```lua copy filename="ThreadRecycler.lua" {2-8}
 local SETTINGS = {
 	Default = {
 		threadCount = 10 :: number, -- Default initial thread count 
