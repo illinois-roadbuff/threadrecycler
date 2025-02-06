@@ -6,11 +6,7 @@ An efficient thread management module written in Luau for Roblox. (Strictly type
 
 ## Performance
 
-ThreadRecycler optimizes thread usage by recycling and reusing it, reducing resource consumption. 
-
-Fewer resources are wasted on unnecessary threads, leading to faster execution.
-
-While ThreadRecycler helps optimize thread usage, it may depend the number of active threads.
+ThreadRecycler optimizes thread usage by recycling and reusing it in a thread pool, reducing resource consumption. Fewer resources are wasted on unnecessary threads, leading to faster execution. While ThreadRecycler helps optimize thread usage, it may depend the number of active threads.
 
 ## Limitations
 * Must replace `task.wait()` with `ThreadRecycler.wait()` to prevent issues in the task library. (more context in the API reference)
@@ -19,80 +15,21 @@ While ThreadRecycler helps optimize thread usage, it may depend the number of ac
 
 ## Benchmarks
 
-* Compares Heartbeat to workload. What is specifically used for workload in this case is remote events, property changes, and calulations. 
-  * A heartbeat is usually 1/60th of a second; around 0.0167. Larger number = slower. 
-* In addition to this being my first public module, this is also my first benchmark? 
-
 * Specs: Intel Core i7-9850H @ 2.60GHz; 64 GB RAM; dGPU: NVIDIA Quadro RTX 4000; Mobile Workstation
 
 <Callout type="info">
-This doesn't measure in FPS (e.g 60 fps); it uses ms instead. 60 FPS -> 1/60
+Only `spawn` and `wrap` are compared, as using `task.defer` is considered "unsafe" in this module. `delay` cannot be benchmarked as there cannot be yielding. 
 </Callout>
 
-<Callout type="default">
-Input (x): Workload; Output (y): Average Heartbeat (s).
-</Callout>
+**task.spawn vs ThreadPool.spawn**
 
-![Compareofwrap|1963x112,20%](../app/xygraphwrap.png)
+![task.spawn vs ThreadPool.spawn](../../../benchmarks/spawnbenchmark.png)
+
+**coroutine.wrap vs ThreadPool.wrap**
+
+![coroutine.wrap vs ThreadPool.wrap](../../../benchmarks/wrapbenchmarks.png)
 
 <Callout type="info">
-  Positive: Recycling takes longer than regular use.
-  Negative: Recycling is faster than regular use.
-</Callout>
-
-<Table>
-  <thead>
-    <Table.Tr>
-      <Table.Th>Workload</Table.Th>
-      <Table.Th>Method</Table.Th>
-      <Table.Th>Manual Recycling</Table.Th>
-      <Table.Th>Auto Recycling</Table.Th>
-      <Table.Th>Regular Use</Table.Th>
-      <Table.Th>Difference (Manual - Regular)</Table.Th>
-      <Table.Th>Difference (Auto - Regular)</Table.Th>
-    </Table.Tr>
-  </thead>
-  <tbody>
-    {[
-      { workload: 100, method: "Recycled Spawn", manual: 0.050934, auto: 0.051028, regular: 0.052784 },
-      { workload: 100, method: "Recycled Defer", manual: 0.016645, auto: 0.016761, regular: 0.052784 },
-      { workload: 100, method: "Recycled Unsafe Defer", manual: 0.051750, auto: 0.051310, regular: 0.052784 },
-      { workload: 100, method: "Recycled Wrap", manual: 0.051318, auto: 0.051484, regular: 0.052118 },
-      { workload: 1100, method: "Recycled Spawn", manual: 0.251524, auto: 0.246071, regular: 0.243614 },
-      { workload: 1100, method: "Recycled Defer", manual: 0.016871, auto: 0.016805, regular: 0.238632 },
-      { workload: 1100, method: "Recycled Unsafe Defer", manual: 0.245513, auto: 0.241942, regular: 0.238632 },
-      { workload: 1100, method: "Recycled Wrap", manual: 0.244087, auto: 0.236169, regular: 0.249500 },
-      { workload: 2100, method: "Recycled Spawn", manual: 0.433967, auto: 0.427168, regular: 0.435914 },
-      { workload: 2100, method: "Recycled Defer", manual: 0.016987, auto: 0.018037, regular: 0.428708 },
-      { workload: 2100, method: "Recycled Unsafe Defer", manual: 0.253181, auto: 0.225600, regular: 0.428708 },
-      { workload: 2100, method: "Recycled Wrap", manual: 0.419219, auto: 0.429620, regular: 0.445877 },
-      { workload: 3100, method: "Recycled Spawn", manual: 0.620988, auto: 0.603288, regular: 0.604013 },
-      { workload: 3100, method: "Recycled Defer", manual: 0.018562, auto: 0.020192, regular: 0.616689 },
-      { workload: 3100, method: "Recycled Unsafe Defer", manual: 0.616978, auto: 0.607503, regular: 0.616689 },
-      { workload: 3100, method: "Recycled Wrap", manual: 0.614544, auto: 0.600208, regular: 0.618695 },
-    ].map(({ workload, method, manual, auto, regular }) => {
-      const diffManual = (manual - regular).toFixed(6);
-      const diffAuto = (auto - regular).toFixed(6);
-      return (
-        <Table.Tr key={`${workload}-${method}`}>
-          <Table.Td>{workload}</Table.Td>
-          <Table.Td>{method}</Table.Td>
-          <Table.Td>{manual.toFixed(6)}</Table.Td>
-          <Table.Td>{auto.toFixed(6)}</Table.Td>
-          <Table.Td>{regular.toFixed(6)}</Table.Td>
-          <Table.Td style={{ color: diffManual < 0 ? 'green' : diffManual > 0 ? 'red' : 'inherit' }}>
-            {diffManual}
-          </Table.Td>
-          <Table.Td style={{ color: diffAuto < 0 ? 'green' : diffAuto > 0 ? 'red' : 'inherit' }}>
-            {diffAuto}
-          </Table.Td>
-        </Table.Tr>
-      );
-    })}
-  </tbody>
-</Table>
-
-<Callout type="info">
-The benchmark place file is in the GitHub repository. /root/benchmarks
+These benchmarks were created using Benchmaker. If you have Benchmaker, you can try it out for yourself by using the bench file in the GitHub repository. /root/benchmarks
 </Callout>
 

@@ -7,7 +7,7 @@ import 'nextra-theme-docs/style.css'
 export const metadata = {
   metadataBase: new URL('https://nextra.site'),
   title: {
-    template: '%s - Illinois_Roadbuff'
+    template: '%s - Illinois_Roadbuffs Framework'
   },
   description: 'Recycle and Reuse Threads!',
   applicationName: 'Nextra',
@@ -42,7 +42,7 @@ export default async function RootLayout({ children }) {
       <Head faviconGlyph="✦" />
       <body>
         <Layout
-          banner={<Banner storageKey="Nextra 2">⚠️ Although stable, this hasn't been used in any mass production enviroments. </Banner>}
+          banner={<Banner storageKey="Nextra 2">🎉 v0.3.0 has been released! </Banner>}
           navbar={navbar}
           footer={<Footer>MIT License Copyright © {new Date().getFullYear()} Illinois_Roadbuff.</Footer>}
           feedback={{ content: "Question(s)? Give me feedback" }}
