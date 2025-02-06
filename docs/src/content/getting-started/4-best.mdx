@@ -29,6 +29,10 @@ end)
 
 CoroutineThreadPool.wrap(CoroutineThreadPool, test, 1) 
 
+--// Example of autocompatible
+TaskThreadPool.autocompatible(TaskThreadPool, test, 1) -- ->  ThreadRecycler: This function supports auto-recycling!
+-- If that statment never shows up, then you must manually recycle. 
+
 ```
 
 ## Best Practices
