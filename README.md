@@ -2,7 +2,7 @@
 Recycle and reuse threads!
 Licensed under MIT (open-source)
 
-⚠️ v0.3.0 is in the works 
+🎉 v0.3.0-alpha released! 
 
 <img src="https://github.com/illinois-roadbuff/threadrecycler/blob/main/threadrecyclerlogo.png" alt="Sample Image" width="100" height="100">
 
