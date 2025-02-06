@@ -45,11 +45,11 @@ ThreadPool.spawn(ThreadPool, foo, ...)
 Creates a `ThreadPool`.
 ```lua copy filename="some-script.luau"
 local ThreadPool = ThreadRecycler.erect({
-    ["InitialThreadCount"] = 60, -- Default initial thread count 
-	["CachedLifetime"] = 60,  -- Default cached lifetime 
-	["EnableStatRecording"] = true, -- Enables default recording of stats 
-	["Logger"] = warn, -- Default log method; doesn't do anything right now. Coming in the future... 
-	["Debug"] = false -- Default debug configuration. Doesn't do anything right now. Coming in the future... 
+    ["InitialThreadCount"] = 60, -- initial thread count 
+	["CachedLifetime"] = 60,  -- cached lifetime 
+	["EnableStatRecording"] = true, -- enables recording of stats 
+	["Logger"] = warn, -- log method; doesn't do anything right now. Coming in the future... 
+	["Debug"] = false -- debug configuration. Doesn't do anything right now. Coming in the future... 
 })
 ```
 
