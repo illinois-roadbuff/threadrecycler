@@ -6,11 +6,7 @@ An efficient thread management module written in Luau for Roblox. (Strictly type
 
 ## Performance
 
-ThreadRecycler optimizes thread usage by recycling and reusing it in a thread pool, reducing resource consumption. 
-
-Fewer resources are wasted on unnecessary threads, leading to faster execution.
-
-While ThreadRecycler helps optimize thread usage, it may depend the number of active threads.
+ThreadRecycler optimizes thread usage by recycling and reusing it in a thread pool, reducing resource consumption. Fewer resources are wasted on unnecessary threads, leading to faster execution. While ThreadRecycler helps optimize thread usage, it may depend the number of active threads.
 
 ## Limitations
 * Must replace `task.wait()` with `ThreadRecycler.wait()` to prevent issues in the task library. (more context in the API reference)
@@ -19,16 +15,21 @@ While ThreadRecycler helps optimize thread usage, it may depend the number of ac
 
 ## Benchmarks
 
-
 * Specs: Intel Core i7-9850H @ 2.60GHz; 64 GB RAM; dGPU: NVIDIA Quadro RTX 4000; Mobile Workstation
 
 <Callout type="info">
 Only `spawn` and `wrap` are compared, as using `task.defer` is considered "unsafe" in this module. `delay` cannot be benchmarked as there cannot be yielding. 
 </Callout>
 
+**task.spawn vs ThreadPool.spawn**
 
+![task.spawn vs ThreadPool.spawn](../../../benchmarks/spawnbenchmark.png)
+
+**coroutine.wrap vs ThreadPool.wrap**
+
+![coroutine.wrap vs ThreadPool.wrap](../../../benchmarks/wrapbenchmarks.png)
 
 <Callout type="info">
-These benchmarks have been created using Benchmaker. If you have Benchmaker, you can use the bench file in the GitHub repository and try it out yourself. /root/benchmarks
+These benchmarks were created using Benchmaker. If you have Benchmaker, you can try it out for yourself by using the bench file in the GitHub repository. /root/benchmarks
 </Callout>
 
