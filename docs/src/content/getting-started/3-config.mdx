@@ -1,15 +1,36 @@
 import { Callout } from 'nextra/components'
 
-## Configuration
-Some internal configs can be modified in the module:
-```lua copy filename="ThreadRecycler.lua" {1-5}
-local ThreadStatsEnabled:boolean = true--enables recording of stats
+Updated for: threadrecycler@0.3.0-alpha.4
 
--- Recycler config
-local StartOnSignal:boolean = true :: boolean --start with manual recycling?
-recycler._tcount = 30 :: number --initial amount of threads
+## Configuration
+### External Configuration
+
+You can edit your `ThreadPool` configuration by editing the table.
+
+```lua copy filename="client-or-server.luau" {3-7}
+local ThreadRecycler = require(game.GetService(game, "ReplicatedStorage").ThreadRecycler) -- p.s. .GetService is faster; Never knew that huh?
+local ThreadPool = ThreadRecycler.erect({ 
+	["InitialThreadCount"] = 60, -- Initial thread count 
+	["CachedLifetime"] = 60,  -- Cached lifetime 
+	["EnableStatRecording"] = true, -- Enables recording of stats 
+	["Logger"] = warn, -- Log method; doesn't do anything right now. Coming in the future... 
+	["Debug"] = false -- Debug configuration. Doesn't do anything right now. Coming in the future... 
+})
+```
+### Internal Configuration
+Some internal configs can be modified in the module, although it will only be applied if you leave `.erect()` blank:
+```lua copy filename="ThreadRecycler.lua" {2-7}
+local SETTINGS = {
+	Default = {
+		threadCount = 10 :: number, -- Default initial thread count 
+		cachedtime = false :: number | boolean, -- Default cached lifetime 
+		enableStatRecording = false :: boolean, -- Enables default recording of stats. Set to false if you don't want to use this.
+		logger = warn :: () -> () , -- Default log method; doesn't do anything right now. Coming in the future... 
+		debug = false :: boolean, -- Default debug configuration. Doesn't do anything right now. Coming in the future... 
+	}
+}
 ```
 <Callout type="info">
-    Changing the initial thread count to a negative number can work.
+    Changing the default thread count to a negative number can work.
 </Callout>
 
