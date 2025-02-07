@@ -1,0 +1,179 @@
+import { Callout } from 'nextra/components'
+
+Updated for: threadrecycler@0.3.0-a.4
+
+## Important: Manually recycling vs. automatically recycling
+The accompanying function **MUST HAVE** a thread parameter whether you're recycling or not. 
+### Automatically recycling
+```lua copy filename="some-script.luau"
+ThreadPool.spawn(ThreadPool, function(thread, ...)
+    print("Thread executed")
+end)
+```
+```lua copy filename="some-script.luau"
+local function foo(thread, ...)
+    print("foo")
+end)
+ThreadPool.spawn(ThreadPool, foo, ...)
+```
+
+### Manually recycling
+```lua copy filename="some-script.luau"
+ThreadPool.spawn(ThreadPool, function(thread, ...)
+    print("Thread executed")
+    ThreadPool.recycle(ThreadPool, thread) -- once you are finished
+end)
+```
+```lua copy filename="some-script.luau"
+local function foo(thread, ...)
+    print("Thread executed")
+    ThreadPool.recycle(ThreadPool, thread)
+end)
+ThreadPool.spawn(ThreadPool, foo, ...)
+```
+
+<Callout type="warning">
+    Manually recycling is not required for the thread to recycle correctly! Don't use it unless you're confident that callback(...) or the funtion that you're providing will yield (or pause) the script entirely. You can check which one would be the best for your function using `ThreadPool.autocompatible()`. More context on the examples page!
+</Callout>
+
+
+## API Reference
+
+### `ThreadRecycler.erect()`
+`ThreadRecycler.erect(Config: {})`
+
+Creates a `ThreadPool`.
+```lua copy filename="some-script.luau"
+local ThreadPool = ThreadRecycler.erect({
+    ["InitialThreadCount"] = 60, -- initial thread count 
+	["CachedLifetime"] = 60,  -- cached lifetime 
+	["EnableStatRecording"] = true, -- enables recording of stats 
+	["Logger"] = warn, -- log method; doesn't do anything right now. Coming in the future... 
+	["Debug"] = false -- debug configuration. Doesn't do anything right now. Coming in the future... 
+})
+```
+
+### `ThreadPool.autocompatible()`
+`ThreadPool.autocompatible(ThreadPool, callback: function, ...: any) -> boolean, number | string)`
+
+Checks whether the function can support auto recycling.
+
+```lua copy filename="some-script.luau"
+local function foo(thread, ...)
+    print("Thread executed")
+end)
+ThreadPool.autocompatible(ThreadPool, foo, ...) -- > ThreadRecycler: This function supports auto-recycling!
+```
+
+<Callout type="info">
+    Make sure you have your output open! This is the only way you can retrieve the results.
+</Callout>
+
+### `ThreadPool.wrap()`
+`ThreadPool.wrap(ThreadPool, callback: function, ...: any)`
+
+Creates and runs a thread using `coroutine.create()` and `coroutine.resume()`. 
+```lua copy filename="some-script.luau"
+ThreadPool.wrap(ThreadPool, function(thread) -- function(index: number) if use signal == true
+    print("Thread executed")
+end)
+```
+
+### `ThreadPool.spawn()`
+`ThreadPool.spawn(ThreadPool, callback: function, ...: any)`
+
+Creates and runs a thread immediately using `task.spawn()`. 
+```lua copy filename="some-script.luau"
+ThreadPool.spawn(ThreadPool, function(thread)
+    print("Thread executed")
+end)
+```
+
+### `ThreadPool.defer()`
+`ThreadPool.defer(ThreadPool, callback: function, ...: any)`
+
+Executes a function on the next `RunService.Heartbeat`.
+```lua copy filename="some-script.luau"
+ThreadPool.defer(ThreadPool, function(thread)
+    print("Deferred execution")
+end)
+```
+
+### `ThreadPool.gooddefer()`
+`ThreadPool.gooddefer(ThreadPool, callback: function, ...: any)`
+
+Executes a function on the next `RunService.Heartbeat`. Works the same way as `ThreadRecycler.defer`, but doesn't have a function overhead.
+```lua copy filename="some-script.luau"
+ThreadPool.gooddefer(ThreadPool, function(thread)
+    print("Executed on Heartbeat")
+end)
+```
+
+### `ThreadPool.unsafedefer()`
+
+`ThreadPool.unsafedefer(ThreadPool, callback: function, ...: any)`
+Uses `task.defer()` to execute the function at the end of the current execution cycle.
+```lua copy filename="some-script.luau"
+ThreadPool.unsafedefer(ThreadPool, function()
+    print("Unsafe defer execution")
+end)
+```
+<Callout type="error">
+    It's STRONGLY recommended if you refrain from using this function; will lead to warnings and issues in the task library. (e.g. task.defer should not be called on a thread that is already 'deferred' in the task library)
+</Callout>
+
+### `ThreadPool.unsafedelay()`
+`ThreadPool.unsafedelay(ThreadPool, time: number, callback: function, ...: any)`
+
+Uses `task.delay()` to execute the function after some time has been elapsed.
+```lua copy filename="some-script.luau"
+ThreadPool.unsafedelay(ThreadPool, 1, function(thread)
+    print("Unsafe delay execution")
+end)
+```
+<Callout type="error">
+    It's STRONGLY recommended if you refrain from using this function; will lead to warnings and issues in the task library. (e.g. task.delay should not be called on a thread that is already 'waiting' in the task library)
+</Callout>
+
+### `ThreadPool.delay()`
+`ThreadPool.delay(ThreadPool, time: number, callback: function, ...: any)`
+
+Uses `ThreadRecycler.wait()` to execute the function after some time has been elapsed.
+```lua copy filename="some-script.luau"
+ThreadPool.delay(ThreadPool, 1, function(thread)
+    print("Defer execution")
+end)
+```
+
+### `ThreadPool.wait()`
+`ThreadPool.wait(seconds: number | nil)`
+
+Pauses execution for a set duration using `os.clock()`.
+```lua copy filename="some-script.luau"
+ThreadPool.wait(2) -- Waits for 2 seconds
+```
+<Callout type="info">
+    This function replaces `task.wait()`.
+</Callout>
+
+### `ThreadPool.recycle()`
+`ThreadPool.recycle(ThreadPool, thread)`
+
+Recycles a thread back into the pool.
+```lua copy filename="some-script.luau"
+ThreadRecycler.recycle(thread) -- Recycle thread 
+```
+
+### `ThreadPool.getstat()`
+`ThreadPool.getstat(ThreadPool, stat: string) -> boolean, number | string)`
+
+Retrieves statistics about thread usage. Works on Count, Recycled, and Created.
+```lua copy filename="some-script.luau"
+local success, count = ThreadPool.getstat(ThreadPool, "Count") -- functions like a pcall
+if success then
+    print("Active threads:", count)
+end
+```
+<Callout type="warning">
+    ThreadStatsEnabled must be set to true in order for this function to work! Configure this in the module.
+</Callout>
