@@ -10,8 +10,8 @@ local PoolConfig = {
 	["Logger"] = warn,
 	["Debug"] = false
 }
-local CoroutineThreadPool = ThreadRecycler.erect(PoolConfig)
-local TaskThreadPool = ThreadRecycler.erect(PoolConfig) -- it would be best to keep them both separated
+local CoroutineThreadPool = ThreadRecycler.construct(PoolConfig)
+local TaskThreadPool = ThreadRecycler.construct(PoolConfig) -- it would be best to keep them both separated
 
 local function test(thread, x)
     print("Hello!")
