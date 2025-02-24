@@ -10,9 +10,9 @@
   FRAMEWORK:        N/A (Standalone Version)
   
   AUTHOR:           Illinois_Roadbuff
-  VERSION:          0.3.0-alpha.4
+  VERSION:          0.3.1-alpha.1
   CREATED:          2024-11-29 10:47 AM CST  
-  LAST UPDATE:      2025-2-5 11:01 PM CST  
+  LAST UPDATE:      2025-2-23 11:16 PM CST  
   LICENSE:          MIT License
 
   GITHUB REPO:      https://github.com/illinois-roadbuff/threadrecycler
@@ -45,7 +45,7 @@ local GlobalPool:recycler
 
 export type recycler = { -- Recycling pool?
 	__index: () -> () | recycler,
-	erect: ({InitialThreadCount:number, CachedLifetime:number|boolean, EnableStatRecording:boolean, Logger:()->(), Debug:boolean}) -> recycler,
+	construct: ({InitialThreadCount:number, CachedLifetime:number|boolean, EnableStatRecording:boolean, Logger:()->(), Debug:boolean}) -> recycler,
 	_tcount: number, -- Thread count
 	_enablestatrec: boolean,
 	_debug: boolean,
@@ -71,6 +71,17 @@ export type recycler = { -- Recycling pool?
 recycler.__index = recycler 
 
 --// ----- Private Functions ----- //--
+
+local function SetUpRecycler(local_recycler:recycler, Config:{})
+	if Config["InitialThreadCount"] == nil or Config["CachedLifetime"] == nil then warn("ThreadRecycler: Warning; do you have a configuration? .new({['ThreadCount'] = 0, ['CachedLifetime'] = false})") end
+	local_recycler.ThreadStats = {["Created"] = 0 ,["Count"] = 0, ["Recycled"] = 0} 
+	local_recycler._open = {} 
+	local_recycler._tcount = if Config["InitialThreadCount"] then Config["InitialThreadCount"] else SETTINGS.Default.threadCount
+	local_recycler._time = if Config["CachedLifetime"] then Config["CachedLifetime"] else SETTINGS.Default.cachedtime
+	local_recycler._enablestatrec = if Config["EnableStatRecording"] then Config["EnableStatRecording"] else SETTINGS.Default.enableStatRecording
+	local_recycler._logger = if Config["Logger"] then Config["Logger"] else SETTINGS.Default.logger
+	local_recycler._debug = if Config["Debug"] then Config["Debug"] else SETTINGS.Default.debug
+end
 
 function recycler._invoke<T...>(threads:recycler, thread:thread, callback: (thread:thread, T...) -> nil, ...: T...)
 	local index = #threads._open
@@ -138,20 +149,9 @@ function recycler.wait(seconds: number | nil)
 end
 
 
-function recycler.erect(Config:{}) : recycler -- threadCount: number?, cached: number | boolean
+function recycler.construct(Config:{}) : recycler 
 	local local_recycler: recycler = (setmetatable({}, recycler):: any)  :: recycler
-	if Config["InitialThreadCount"] == nil or Config["CachedLifetime"] == nil then warn("ThreadRecycler: Warning; do you have a configuration? .new({['ThreadCount'] = 0, ['CachedLifetime'] = false})") end
-	local_recycler.ThreadStats = {
-		["Created"] = 0,
-		["Count"] = 0,
-		["Recycled"] = 0
-	} 
-	local_recycler._open = {} 
-	local_recycler._tcount = if Config["InitialThreadCount"] then Config["InitialThreadCount"] else SETTINGS.Default.threadCount
-	local_recycler._time = if Config["CachedLifetime"] then Config["CachedLifetime"] else SETTINGS.Default.cachedtime
-	local_recycler._enablestatrec = if Config["EnableStatRecording"] then Config["EnableStatRecording"] else SETTINGS.Default.enableStatRecording
-	local_recycler._logger = if Config["Logger"] then Config["Logger"] else SETTINGS.Default.logger
-	local_recycler._debug = if Config["Debug"] then Config["Debug"] else SETTINGS.Default.debug
+	SetUpRecycler(local_recycler, Config)
 	for n = 1, math.abs(local_recycler._tcount), 1 do
 		local_recycler._create(local_recycler :: recycler)
 	end
@@ -228,14 +228,13 @@ function recycler.unsafedelay<T...>(threads:recycler? | boolean, time:number, ca
 	return task.delay(time, thread::thread, thread,  callback:: (T...) -> nil, ...)
 end
 
-GlobalPool = recycler.erect({
+GlobalPool = recycler.construct({
 	["InitialThreadCount"] = SETTINGS.Default.threadCount; 
 	["CachedLifetime"] = SETTINGS.Default.cachedtime; 
 	["EnableStatRecording"] = SETTINGS.Default.enableStatRecording; 
 	["Logger"] = SETTINGS.Default.logger; 
 	["Debug"] = SETTINGS.Default.debug 
 }) :: recycler
-
 
 setmetatable(recycler, {
 	__index = function(self, key)
@@ -245,7 +244,8 @@ setmetatable(recycler, {
 	end,
 }) 
 
-return (recycler::any) :: recycler
+
+return (recycler :: any) :: recycler
 
 -- Not used
 --// ----- Prerequisite Modules ----- //--
