@@ -39,12 +39,12 @@ ThreadPool.spawn(ThreadPool, foo, ...)
 
 ## API Reference
 
-### `ThreadRecycler.erect()`
-`ThreadRecycler.erect(Config: {})`
+### `ThreadRecycler.construct()`
+`ThreadRecycler.construct(Config: {})`
 
 Creates a `ThreadPool`.
 ```lua copy filename="some-script.luau"
-local ThreadPool = ThreadRecycler.erect({
+local ThreadPool = ThreadRecycler.construct({
     ["InitialThreadCount"] = 60, -- initial thread count 
 	["CachedLifetime"] = 60,  -- cached lifetime 
 	["EnableStatRecording"] = true, -- enables recording of stats 
