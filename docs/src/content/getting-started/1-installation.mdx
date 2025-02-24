@@ -20,7 +20,7 @@ Head over to releases and download the `.rbxm` file from the latest version. The
 To use ThreadRecycler, require the module in your script. Then, create a `ThreadPool` and set up your config:
 ```lua copy filename="client-or-server.luau"
 local ThreadRecycler = require(game:GetService("ReplicatedStorage").ThreadRecycler) 
-local ThreadPool = ThreadRecycler.erect({ -- erect basically means to build or create
+local ThreadPool = ThreadRecycler.construct({
 	["InitialThreadCount"] = 60, -- Initial thread count 
 	["CachedLifetime"] = 60,  -- Cached lifetime 
 	["EnableStatRecording"] = true, -- Enables recording of stats 
